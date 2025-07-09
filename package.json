@@ -1,0 +1,30 @@
+{
+  "name": "toolhouse-n8n",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.10.0"
+  },
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/nodes/ToolhouseApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Toolhouse.node.js",
+      "dist/nodes/ToolhouseWebhook.node.js"
+    ]
+  },
+  "devDependencies": {
+    "n8n-core": "^1.14.1",
+    "n8n-workflow": "^1.82.0",
+    "typescript": "^5.8.3"
+  }
+}
