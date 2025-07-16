@@ -8,14 +8,14 @@ export class ToolhouseApi implements ICredentialType {
   displayName = 'Toolhouse API';
   properties: INodeProperties[] = [
     {
-      displayName: 'Token',
+      displayName: 'API Key',
       name: 'token',
       type: 'string',
       typeOptions: {
         password: true,
       },
       default: '',
-      description: 'Your Toolhouse API token',
+      description: 'Find your Toolhouse API key in your Toolhouse dashboard at https://app.toolhouse.ai/settings/api-keys',
     },
   ];
 } 

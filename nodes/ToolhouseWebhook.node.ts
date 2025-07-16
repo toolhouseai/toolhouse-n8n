@@ -11,7 +11,7 @@ export class ToolhouseWebhook implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Toolhouse Webhook',
 		name: 'toolhouseWebhook',
-		icon: 'fa:link',
+		icon: 'file:toolhouse.svg',
 		group: ['trigger'],
 		version: 1,
 		description: 'Handle callbacks from Toolhouse agents',

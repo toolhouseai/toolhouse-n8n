@@ -1,5 +1,10 @@
 # Toolhouse n8n Custom Nodes
 
+> **Important:** Before building or running, you must install dependencies with:
+> ```sh
+> npm install
+> ```
+
 This package provides custom n8n nodes to integrate with [Toolhouse](https://toolhouse.ai), including:
 - **Toolhouse**: Interact with Toolhouse agents (send/continue conversations)
 - **Toolhouse Webhook**: Receive callbacks from Toolhouse agents
@@ -34,11 +39,13 @@ This package provides custom n8n nodes to integrate with [Toolhouse](https://too
    npm install
    ```
 
-2. **Build the nodes**
+2. **Build the nodes and copy assets**
    ```sh
-   npx tsc
+   npm run build
    ```
-   Compiled files will be in the `dist/` directory.
+   - This will compile TypeScript files to the `dist/` directory **and** copy the `toolhouse.svg` icon to `dist/nodes/`.
+   - The build process uses [`copyfiles`](https://www.npmjs.com/package/copyfiles) for cross-platform compatibility.
+   - **Always use `npm run build` instead of just `npx tsc` to ensure assets are included!**
 
 ---
 
@@ -53,9 +60,9 @@ A `docker-compose.yml` is provided. It will:
    ```sh
    npm install
    ```
-2. **Build your custom nodes:**
+2. **Build your custom nodes and copy assets:**
    ```sh
-   npx tsc
+   npm run build
    ```
 3. **Start n8n with Docker Compose:**
    ```sh
@@ -69,13 +76,13 @@ A `docker-compose.yml` is provided. It will:
    - Open [http://localhost:5678](http://localhost:5678) in your browser.
 
 ### **Rebuilding After Changes**
-- If you make changes to your TypeScript node files, you must rebuild before restarting Docker Compose:
+- If you make changes to your TypeScript node files or assets, you must rebuild before restarting Docker Compose:
   ```sh
-  npx tsc
+  npm run build
   docker compose down
   docker compose up
   ```
-- This ensures the latest code is available in the container.
+- This ensures the latest code and assets are available in the container.
 
 ---
 
@@ -121,8 +128,8 @@ A `docker-compose.yml` is provided. It will:
 - Check the n8n UI **Executions** tab for workflow run details and errors.
 - If credentials are not found:
   - Ensure the credential name matches everywhere (`toolhouseApi`)
-  - Rebuild (`npx tsc`) and restart Docker/n8n
-  - Check that `dist/nodes/ToolhouseApi.credentials.js` is present and mounted
+  - Rebuild (`npm run build`) and restart Docker/n8n
+  - Check that `dist/nodes/ToolhouseApi.credentials.js` and `dist/nodes/toolhouse.svg` are present and mounted
   - Check logs for errors
 
 ---

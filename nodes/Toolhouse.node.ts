@@ -14,7 +14,7 @@ export class Toolhouse implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Toolhouse',
 		name: 'toolhouse',
-		icon: 'fa:robot',
+		icon: 'file:toolhouse.svg',
 		group: ['transform'],
 		version: 1,
 		description: 'Send and continue conversations with Toolhouse agent',
@@ -25,6 +25,17 @@ export class Toolhouse implements INodeType {
 		inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main, NodeConnectionType.Main],
 		properties: [
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				options: [
+					{ name: 'Start Conversation', value: 'start' },
+					{ name: 'Continue Conversation', value: 'continue' },
+				],
+				default: 'start',
+				description: 'Choose whether to start a new conversation or continue an existing one',
+			},
 			{
 				displayName: 'Agent',
 				name: 'agentId',
@@ -47,8 +58,14 @@ export class Toolhouse implements INodeType {
 				name: 'runId',
 				type: 'string',
 				default: '',
-				description: 'Run ID for continuing conversation (leave blank for new)',
+				description: 'Run ID for continuing conversation',
 				required: false,
+				// Only show when operation is 'continue'
+				displayOptions: {
+					show: {
+						operation: ['continue'],
+					},
+				},
 			},
 		],
 		credentials: [
@@ -84,11 +101,15 @@ export class Toolhouse implements INodeType {
 		const returnData: [INodeExecutionData | null, INodeExecutionData | null][] = [];
 
 		for (let i = 0; i < items.length; i++) {
+			const operation = this.getNodeParameter('operation', i) as string;
 			const agentId = this.getNodeParameter('agentId', i) as string;
 			const credentials = await this.getCredentials('toolhouseApi') as { token?: string };
 			const token = credentials?.token || '';
 			const message = this.getNodeParameter('message', i) as string;
-			let runId = this.getNodeParameter('runId', i, '') as string;
+			let runId = '';
+			if (operation === 'continue') {
+				runId = this.getNodeParameter('runId', i, '') as string;
+			}
 			let responseData;
 			let newRunId = runId;
 			let isError = false;
@@ -99,11 +120,11 @@ export class Toolhouse implements INodeType {
 			}
 
 			try {
-				if (!runId) {
+				if (operation === 'start') {
 					// Start new conversation
 					const response = await axios.post(
 						`${TOOLHOUSE_AGENT_URL}/${agentId}`,
-						{ message, stream: false },
+						{ message },
 						{ headers },
 					);
 					responseData = response.data;
@@ -112,7 +133,7 @@ export class Toolhouse implements INodeType {
 					// Continue conversation
 					const response = await axios.put(
 						`${TOOLHOUSE_AGENT_URL}/${agentId}/${runId}`,
-						{ message, stream: false },
+						{ message },
 						{ headers },
 					);
 					responseData = response.data;

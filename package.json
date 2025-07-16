@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc && npm run postbuild",
+    "postbuild": "npx copyfiles -u 1 nodes/toolhouse.svg dist"
   },
   "keywords": [],
   "author": "",
@@ -20,9 +22,11 @@
     "nodes": [
       "dist/nodes/Toolhouse.node.js",
       "dist/nodes/ToolhouseWebhook.node.js"
-    ]
+    ],
+    "icon": "dist/nodes/toolhouse.svg"
   },
   "devDependencies": {
+    "copyfiles": "^2.4.1",
     "n8n-core": "^1.14.1",
     "n8n-workflow": "^1.82.0",
     "typescript": "^5.8.3"
