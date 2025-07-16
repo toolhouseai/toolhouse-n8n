@@ -34,26 +34,26 @@ export class ToolhouseWebhook implements INodeType {
 
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
 		const body = this.getBodyData() as {
-			run_id: string;
-			status: string;
-			last_agent_message: string;
+			data: {
+				run_id: string;
+				status: string;
+				last_agent_message: string;
+			};
 		};
 
 		const item: INodeExecutionData = {
 			json: {
-				run_id: body.run_id,
-				status: body.status,
-				last_agent_message: body.last_agent_message,
+				run_id: body.data.run_id,
+				status: body.data.status,
+				last_agent_message: body.data.last_agent_message,
 			},
 		};
 
-		if (body.status === 'completed') {
+		if (body.data.status === 'completed') {
 			return { workflowData: [[item], []] };
-		} else if (body.status === 'failed') {
-			return { workflowData: [[], [item]] };
 		} else {
-			// Default: send to first output
-			return { workflowData: [[item], []] };
+			// Any status other than 'completed' is considered failure
+			return { workflowData: [[], [item]] };
 		}
 	}
 } 
