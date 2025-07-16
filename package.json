@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx tsc && npm run postbuild",
+    "build": "rm -rf dist && npx tsc && npm run postbuild",
     "postbuild": "npx copyfiles -u 1 nodes/toolhouse.svg dist"
   },
   "keywords": [],

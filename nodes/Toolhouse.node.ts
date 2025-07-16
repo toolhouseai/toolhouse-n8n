@@ -42,6 +42,13 @@ export class Toolhouse implements INodeType {
 				type: 'options',
 				typeOptions: {
 					loadOptionsMethod: 'getAgents',
+					loadOptionFunctions: [
+						{
+							name: 'Check Public/Private',
+							value: 'checkPublicPrivate',
+							description: 'Check if the selected agent is public or private',
+						},
+					],
 				},
 				default: '',
 				description: 'Select a Toolhouse agent',
@@ -88,10 +95,29 @@ export class Toolhouse implements INodeType {
 					'Authorization': `Bearer ${token}`,
 				};
 				const response = await axios.get(`${TOOLHOUSE_API}/agents`, { headers });
-				return response.data.map((agent: { id: string; title: string }) => ({
-					name: agent.title,
+				return response.data.map((agent: { id: string; title: string; public?: boolean }) => ({
+					name: `${agent.title} (${agent.public === false ? 'Private' : 'Public'})`,
 					value: agent.id,
 				}));
+			},
+
+			async checkPublicPrivate(this: ILoadOptionsFunctions) {
+				const agentId = this.getNodeParameter('agentId') as string;
+				const credentials = await this.getCredentials('toolhouseApi');
+				if (!credentials || !credentials.token) {
+					throw new Error('Unable to retrieve Toolhouse API credentials. Please check your configuration.');
+				}
+				const token = credentials.token;
+				const headers: Record<string, string> = {
+					'Authorization': `Bearer ${token}`,
+				};
+				const response = await axios.get(`${TOOLHOUSE_API}/agents/${agentId}`, { headers });
+				const isPublic = response.data.public !== false;
+				return [{
+					name: isPublic ? 'Public Agent' : 'Private Agent',
+					value: isPublic ? 'public' : 'private',
+					description: isPublic ? 'This agent is public.' : 'This agent is private.',
+				}];
 			},
 		},
 	};
@@ -103,8 +129,38 @@ export class Toolhouse implements INodeType {
 		for (let i = 0; i < items.length; i++) {
 			const operation = this.getNodeParameter('operation', i) as string;
 			const agentId = this.getNodeParameter('agentId', i) as string;
+			let agentIsPublic = true;
 			const credentials = await this.getCredentials('toolhouseApi') as { token?: string };
 			const token = credentials?.token || '';
+			// Always fetch agent info at execution time
+			if (agentId) {
+				try {
+					const headers: Record<string, string> = {};
+					if (token) {
+						headers['Authorization'] = `Bearer ${token}`;
+					}
+					const response = await axios.get(`${TOOLHOUSE_API}/agents/${agentId}`, { headers });
+					agentIsPublic = response.data.public !== false;
+				} catch (error: any) {
+					if (error.response && error.response.status === 403) {
+						const item = {
+							json: {
+								error: {
+								message: 'You do not have access to this private agent.',
+								status: 403,
+								details: error.response.data || null,
+							},
+							runId: '',
+							agentId: agentId,
+							public: false,
+						},
+					};
+					return [[], [item]];
+					} else {
+						throw error;
+					}
+				}
+			}
 			const message = this.getNodeParameter('message', i) as string;
 			let runId = '';
 			if (operation === 'continue') {
@@ -115,7 +171,7 @@ export class Toolhouse implements INodeType {
 			let isError = false;
 
 			const headers: Record<string, string> = {};
-			if (token) {
+			if (!agentIsPublic && token) {
 				headers['Authorization'] = `Bearer ${token}`;
 			}
 
@@ -140,7 +196,16 @@ export class Toolhouse implements INodeType {
 					// runId remains the same
 				}
 			} catch (error: any) {
-				responseData = { error: error.message, details: error.response?.data };
+				let status = error.response?.status || null;
+				let details = error.response?.data || null;
+				let message = error.message || 'Unknown error';
+				responseData = {
+					error: {
+						message,
+						status,
+						details,
+					},
+				};
 				isError = true;
 			}
 
@@ -148,6 +213,8 @@ export class Toolhouse implements INodeType {
 				json: {
 					response: responseData,
 					runId: newRunId,
+					agentId: agentId,
+					public: agentIsPublic,
 				},
 			};
 
