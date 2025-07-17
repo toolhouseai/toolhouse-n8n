@@ -15,7 +15,7 @@ export class Toolhouse implements INodeType {
 		displayName: 'Toolhouse',
 		name: 'toolhouse',
 		icon: 'file:toolhouse.svg',
-		documentationUrl: 'https://docs.toolhouse.ai/toolhouse',
+		documentationUrl: 'https://docs.toolhouse.ai/toolhouse/deploy-and-run-your-agents#continuing-an-interaction-with-an-agent',
 		group: ['transform'],
 		version: 1,
 		description: 'Send and continue conversations with Toolhouse agent',
