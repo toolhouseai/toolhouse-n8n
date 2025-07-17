@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf dist && npx tsc && npm run postbuild",
-    "postbuild": "npx copyfiles -u 1 nodes/toolhouse.svg dist"
+    "build": "npx rimraf dist && tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes credentials package.json"
   },
   "keywords": [
     "agents",
@@ -34,7 +37,7 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/nodes/ToolhouseApi.credentials.js"
+      "dist/credentials/ToolhouseApi.credentials.js"
     ],
     "nodes": [
       "dist/nodes/Toolhouse.node.js",
@@ -43,8 +46,8 @@
     "icon": "dist/nodes/toolhouse.svg"
   },
   "devDependencies": {
-    "copyfiles": "^2.4.1",
     "eslint-plugin-n8n-nodes-base": "^1.16.3",
+    "gulp": "^5.0.1",
     "n8n-core": "^1.14.1",
     "n8n-workflow": "^1.82.0",
     "typescript": "^5.8.3"
