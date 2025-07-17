@@ -1,4 +1,5 @@
 import {
+  Icon,
   ICredentialType,
   INodeProperties,
 } from 'n8n-workflow';
@@ -6,16 +7,18 @@ import {
 export class ToolhouseApi implements ICredentialType {
   name = 'toolhouseApi';
   displayName = 'Toolhouse API';
+  documentationUrl = 'https://docs.toolhouse.ai/toolhouse';
+  icon: Icon = 'file:toolhouse.svg';
   properties: INodeProperties[] = [
     {
-      displayName: 'Token',
+      displayName: 'API Key',
       name: 'token',
       type: 'string',
       typeOptions: {
         password: true,
       },
       default: '',
-      description: 'Your Toolhouse API token',
+      description: 'Find your Toolhouse API key in your Toolhouse dashboard at https://app.toolhouse.ai/settings/api-keys',
     },
   ];
 } 
