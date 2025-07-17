@@ -3,7 +3,7 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	NodeConnectionType,
+	NodeOperationError,
 } from 'n8n-workflow';
 import axios from 'axios';
 
@@ -15,12 +15,12 @@ export class Toolhouse implements INodeType {
 		displayName: 'Toolhouse',
 		name: 'toolhouse',
 		icon: 'file:toolhouse.svg',
+		documentationUrl: 'https://docs.toolhouse.ai/toolhouse',
 		group: ['transform'],
 		version: 1,
 		description: 'Send and continue conversations with Toolhouse agent',
 		defaults: {
 			name: 'Toolhouse',
-			color: '#00b894',
 		},
 		inputs: ['main'],
 		outputs: ['main', 'main'],
@@ -29,6 +29,7 @@ export class Toolhouse implements INodeType {
 				displayName: 'Operation',
 				name: 'operation',
 				type: 'options',
+				noDataExpression: true,
 				options: [
 					{ name: 'Start Conversation', value: 'start' },
 					{ name: 'Continue Conversation', value: 'continue' },
@@ -37,7 +38,7 @@ export class Toolhouse implements INodeType {
 				description: 'Choose whether to start a new conversation or continue an existing one',
 			},
 			{
-				displayName: 'Agent',
+				displayName: 'Agent Name or ID',
 				name: 'agentId',
 				type: 'options',
 				typeOptions: {
@@ -51,7 +52,7 @@ export class Toolhouse implements INodeType {
 					],
 				},
 				default: '',
-				description: 'Select a Toolhouse agent',
+				description: 'Select a Toolhouse agent. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 			},
 			{
 				displayName: 'Message',
@@ -66,7 +67,6 @@ export class Toolhouse implements INodeType {
 				type: 'string',
 				default: '',
 				description: 'Run ID for continuing conversation',
-				required: false,
 				// Only show when operation is 'continue'
 				displayOptions: {
 					show: {
@@ -88,7 +88,7 @@ export class Toolhouse implements INodeType {
 			async getAgents(this: ILoadOptionsFunctions) {
 				const credentials = await this.getCredentials('toolhouseApi');
 				if (!credentials || !credentials.token) {
-					throw new Error('Unable to retrieve Toolhouse API credentials. Please check your configuration.');
+					throw new NodeOperationError(this.getNode(), 'Unable to retrieve Toolhouse API credentials. Please check your configuration.');
 				}
 				const token = credentials.token;
 				const headers: Record<string, string> = {
@@ -105,7 +105,7 @@ export class Toolhouse implements INodeType {
 				const agentId = this.getNodeParameter('agentId') as string;
 				const credentials = await this.getCredentials('toolhouseApi');
 				if (!credentials || !credentials.token) {
-					throw new Error('Unable to retrieve Toolhouse API credentials. Please check your configuration.');
+					throw new NodeOperationError(this.getNode(), 'Unable to retrieve Toolhouse API credentials. Please check your configuration.');
 				}
 				const token = credentials.token;
 				const headers: Record<string, string> = {

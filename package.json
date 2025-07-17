@@ -22,8 +22,11 @@
     "type": "git",
     "url": "https://github.com/toolhouseai/toolhouse-n8n.git"
   },
-  "author": "hello@toolhouse.ai",
-  "license": "Apache-2.0",
+  "author": {
+    "name": "Toolhouse AI",
+    "email": "hello@toolhouse.ai"
+  },
+  "license": "MIT",
   "description": "Toolhouse AI nodes for n8n",
   "dependencies": {
     "axios": "^1.10.0"
@@ -46,6 +49,7 @@
     "icon": "dist/nodes/toolhouse.svg"
   },
   "devDependencies": {
+    "@typescript-eslint/parser": "^8.37.0",
     "eslint-plugin-n8n-nodes-base": "^1.16.3",
     "gulp": "^5.0.1",
     "n8n-core": "^1.14.1",

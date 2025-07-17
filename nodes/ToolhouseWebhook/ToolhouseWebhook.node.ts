@@ -12,12 +12,12 @@ export class ToolhouseWebhook implements INodeType {
 		displayName: 'Toolhouse Webhook',
 		name: 'toolhouseWebhook',
 		icon: 'file:toolhouse.svg',
+		documentationUrl: 'https://docs.toolhouse.ai/toolhouse',
 		group: ['trigger'],
 		version: 1,
 		description: 'Handle callbacks from Toolhouse agents',
 		defaults: {
 			name: 'Toolhouse Webhook',
-			color: '#0984e3',
 		},
 		inputs: [],
 		outputs: ['main', 'main'],

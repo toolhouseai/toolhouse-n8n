@@ -1,4 +1,5 @@
 import {
+  Icon,
   ICredentialType,
   INodeProperties,
 } from 'n8n-workflow';
@@ -6,6 +7,8 @@ import {
 export class ToolhouseApi implements ICredentialType {
   name = 'toolhouseApi';
   displayName = 'Toolhouse API';
+  documentationUrl = 'https://docs.toolhouse.ai/toolhouse';
+  icon: Icon = 'file:toolhouse.svg';
   properties: INodeProperties[] = [
     {
       displayName: 'API Key',
