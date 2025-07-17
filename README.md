@@ -29,11 +29,6 @@ This package provides custom n8n nodes to integrate with [Toolhouse](https://too
 
 ## Setup & Build
 
-> **First step:** Install dependencies
-> ```sh
-> npm install
-> ```
-
 1. **Install dependencies** (if you haven't already)
    ```sh
    npm install
@@ -43,8 +38,7 @@ This package provides custom n8n nodes to integrate with [Toolhouse](https://too
    ```sh
    npm run build
    ```
-   - This will compile TypeScript files to the `dist/` directory **and** copy the `toolhouse.svg` icon to `dist/nodes/`.
-   - The build process uses [`copyfiles`](https://www.npmjs.com/package/copyfiles) for cross-platform compatibility.
+   - This will compile TypeScript files to the `dist/` directory **and** copy the `toolhouse.svg` icons.
    - **Always use `npm run build` instead of just `npx tsc` to ensure assets are included!**
 
 ---
