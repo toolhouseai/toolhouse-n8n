@@ -22,8 +22,8 @@ export class Toolhouse implements INodeType {
 			name: 'Toolhouse',
 			color: '#00b894',
 		},
-		inputs: [NodeConnectionType.Main],
-		outputs: [NodeConnectionType.Main, NodeConnectionType.Main],
+		inputs: ['main'],
+		outputs: ['main', 'main'],
 		properties: [
 			{
 				displayName: 'Operation',

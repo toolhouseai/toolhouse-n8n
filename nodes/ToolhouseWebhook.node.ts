@@ -20,7 +20,7 @@ export class ToolhouseWebhook implements INodeType {
 			color: '#0984e3',
 		},
 		inputs: [],
-		outputs: [NodeConnectionType.Main, NodeConnectionType.Main], // 0: completed, 1: failed
+		outputs: ['main', 'main'],
 		webhooks: [
 			{
 				name: 'default',

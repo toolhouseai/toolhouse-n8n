@@ -1,5 +1,5 @@
 {
-  "name": "toolhouse-n8n",
+  "name": "@toolhouseai/n8n-nodes-toolhouse",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -7,13 +7,30 @@
     "build": "rm -rf dist && npx tsc && npm run postbuild",
     "postbuild": "npx copyfiles -u 1 nodes/toolhouse.svg dist"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": [
+    "agents",
+    "n8n",
+    "n8n-community-node-package",
+    "n8n-node",
+    "toolhouse",
+    "toolhouse-ai"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/toolhouseai/toolhouse-n8n.git"
+  },
+  "author": "hello@toolhouse.ai",
+  "license": "Apache-2.0",
+  "description": "Toolhouse AI nodes for n8n",
   "dependencies": {
     "axios": "^1.10.0"
   },
+  "engines": {
+    "node": ">=20.15"
+  },
+  "files": [
+    "dist"
+  ],
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
@@ -27,6 +44,7 @@
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
+    "eslint-plugin-n8n-nodes-base": "^1.16.3",
     "n8n-core": "^1.14.1",
     "n8n-workflow": "^1.82.0",
     "typescript": "^5.8.3"
