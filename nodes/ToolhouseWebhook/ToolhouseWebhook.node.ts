@@ -12,7 +12,7 @@ export class ToolhouseWebhook implements INodeType {
 		displayName: 'Toolhouse Webhook',
 		name: 'toolhouseWebhook',
 		icon: 'file:toolhouse.svg',
-		documentationUrl: 'https://docs.toolhouse.ai/toolhouse',
+		documentationUrl: 'https://docs.toolhouse.ai/toolhouse/agent-workers/running-agents-asynchronously',
 		group: ['trigger'],
 		version: 1,
 		description: 'Handle callbacks from Toolhouse agents',

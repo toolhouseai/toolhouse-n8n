@@ -12,7 +12,7 @@ const TOOLHOUSE_AGENT_URL = 'https://agents.toolhouse.ai';
 
 export class Toolhouse implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Toolhouse',
+		displayName: 'Toolhouse AI Agent',
 		name: 'toolhouse',
 		icon: 'file:toolhouse.svg',
 		documentationUrl: 'https://docs.toolhouse.ai/toolhouse/deploy-and-run-your-agents#continuing-an-interaction-with-an-agent',

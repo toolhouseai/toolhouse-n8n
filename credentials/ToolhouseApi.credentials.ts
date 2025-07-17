@@ -7,7 +7,7 @@ import {
 export class ToolhouseApi implements ICredentialType {
   name = 'toolhouseApi';
   displayName = 'Toolhouse API';
-  documentationUrl = 'https://docs.toolhouse.ai/toolhouse';
+  documentationUrl = 'https://docs.toolhouse.ai/toolhouse/agent-workers/running-agents-asynchronously/api-reference';
   icon: Icon = 'file:toolhouse.svg';
   properties: INodeProperties[] = [
     {
