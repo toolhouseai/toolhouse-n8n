@@ -4,7 +4,6 @@ import {
 	INodeExecutionData,
 	IWebhookFunctions,
 	IWebhookResponseData,
-	NodeConnectionType,
 } from 'n8n-workflow';
 
 export class ToolhouseWebhook implements INodeType {

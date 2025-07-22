@@ -5,7 +5,6 @@ import {
 	INodeTypeDescription,
 	NodeOperationError,
 } from 'n8n-workflow';
-import axios from 'axios';
 
 const TOOLHOUSE_API = 'https://api.toolhouse.ai/v1';
 const TOOLHOUSE_AGENT_URL = 'https://agents.toolhouse.ai';
@@ -94,8 +93,13 @@ export class Toolhouse implements INodeType {
 				const headers: Record<string, string> = {
 					'Authorization': `Bearer ${token}`,
 				};
-				const response = await axios.get(`${TOOLHOUSE_API}/agents`, { headers });
-				return response.data.map((agent: { id: string; title: string; public?: boolean }) => ({
+				const response = await this.helpers.httpRequest.call(this, {
+					method: 'GET',
+					url: `${TOOLHOUSE_API}/agents`,
+					headers,
+					json: true,
+				});
+				return response.map((agent: { id: string; title: string; public?: boolean }) => ({
 					name: `${agent.title} (${agent.public === false ? 'Private' : 'Public'})`,
 					value: agent.id,
 				}));
@@ -111,8 +115,13 @@ export class Toolhouse implements INodeType {
 				const headers: Record<string, string> = {
 					'Authorization': `Bearer ${token}`,
 				};
-				const response = await axios.get(`${TOOLHOUSE_API}/agents/${agentId}`, { headers });
-				const isPublic = response.data.public !== false;
+				const response = await this.helpers.httpRequest.call(this, {
+					method: 'GET',
+					url: `${TOOLHOUSE_API}/agents/${agentId}`,
+					headers,
+					json: true,
+				});
+				const isPublic = response.public !== false;
 				return [{
 					name: isPublic ? 'Public Agent' : 'Private Agent',
 					value: isPublic ? 'public' : 'private',
@@ -139,16 +148,31 @@ export class Toolhouse implements INodeType {
 					if (token) {
 						headers['Authorization'] = `Bearer ${token}`;
 					}
-					const response = await axios.get(`${TOOLHOUSE_API}/agents/${agentId}`, { headers });
-					agentIsPublic = response.data.public !== false;
+					let agentInfoResponse;
+					if (token) {
+						agentInfoResponse = await this.helpers.httpRequestWithAuthentication.call(this, 'toolhouseApi', {
+							method: 'GET' as const,
+							url: `${TOOLHOUSE_API}/agents/${agentId}`,
+							headers,
+							json: true,
+						});
+					} else {
+						agentInfoResponse = await this.helpers.httpRequest.call(this, {
+							method: 'GET' as const,
+							url: `${TOOLHOUSE_API}/agents/${agentId}`,
+							headers,
+							json: true,
+						});
+					}
+					agentIsPublic = agentInfoResponse.public !== false;
 				} catch (error: any) {
-					if (error.response && error.response.status === 403) {
+					if (error.httpCode === 403) {
 						const item = {
 							json: {
 								error: {
 								message: 'You do not have access to this private agent.',
 								status: 403,
-								details: error.response.data || null,
+								details: error.error || null,
 							},
 							runId: '',
 							agentId: agentId,
@@ -178,26 +202,47 @@ export class Toolhouse implements INodeType {
 			try {
 				if (operation === 'start') {
 					// Start new conversation
-					const response = await axios.post(
-						`${TOOLHOUSE_AGENT_URL}/${agentId}`,
-						{ message },
-						{ headers },
-					);
-					responseData = response.data;
+					const requestOptions = {
+						method: 'POST' as const,
+						url: `${TOOLHOUSE_AGENT_URL}/${agentId}`,
+						headers,
+						body: { message },
+						json: true,
+						returnFullResponse: true,
+					};
+					let response;
+					if (!agentIsPublic && token) {
+						response = await this.helpers.httpRequestWithAuthentication.call(this, 'toolhouseApi', requestOptions);
+					} else {
+						response = await this.helpers.httpRequest.call(this, requestOptions);
+					}
+					responseData = response.body;
 					newRunId = response.headers['x-toolhouse-run-id'] || '';
 				} else {
 					// Continue conversation
-					const response = await axios.put(
-						`${TOOLHOUSE_AGENT_URL}/${agentId}/${runId}`,
-						{ message },
-						{ headers },
-					);
-					responseData = response.data;
-					// runId remains the same
+					const requestOptions = {
+						method: 'PUT' as const,
+						url: `${TOOLHOUSE_AGENT_URL}/${agentId}/${runId}`,
+						headers,
+						body: { message },
+						json: true,
+						returnFullResponse: true,
+					};
+					let response;
+					if (!agentIsPublic && token) {
+						response = await this.helpers.httpRequestWithAuthentication.call(this, 'toolhouseApi', requestOptions);
+					} else {
+						response = await this.helpers.httpRequest.call(this, requestOptions);
+					}
+					responseData = response.body;
+					if (response.headers['x-toolhouse-run-id']) {
+						newRunId = response.headers['x-toolhouse-run-id'];
+					}
+					// runId remains the same if header is not present
 				}
 			} catch (error: any) {
-				let status = error.response?.status || null;
-				let details = error.response?.data || null;
+				let status = error.httpCode || null;
+				let details = error.error || null;
 				let message = error.message || 'Unknown error';
 				responseData = {
 					error: {
