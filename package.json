@@ -1,6 +1,6 @@
 {
   "name": "@toolhouseai/n8n-nodes-toolhouse",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "index.js",
   "scripts": {
     "build": "npx rimraf dist && tsc && npm run copy:icons",
