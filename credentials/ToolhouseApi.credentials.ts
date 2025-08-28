@@ -29,7 +29,7 @@ export class ToolhouseApi implements ICredentialType {
     type: "generic",
     properties: {
       headers: {
-        Authorization: "Bearer {{$credentials.token}}",
+        Authorization: "=Bearer {{$credentials.token}}",
       },
     },
   };
@@ -40,7 +40,7 @@ export class ToolhouseApi implements ICredentialType {
       url: "v1/agents",
       method: "GET",
       headers: {
-        Authorization: "Bearer {{$credentials.token}}",
+        Authorization: "=Bearer {{$credentials.token}}",
       },
     },
   };
